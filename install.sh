@@ -35,10 +35,10 @@ BREWS=(
     ruby
     "rbenv ruby-build"
     shellcheck
-    "sh-syntax-highlighting"
+    # "sh-syntax-highlighting"
     thefuck
     youtube-dl
-    "wget --with-iri"
+    wget
 )
 
 CASKS=(
@@ -131,8 +131,17 @@ GIT_CONFIGS=(
 )
 
 ######################################## End of configuration  ########################################
-set +e
-set -x
+DEBUG=false
+
+while getopts "d" opt; do
+    case "$opt" in
+    d) DEBUG=true ;;
+    *) shift ;;
+    esac
+done
+
+set +e # Exit immediately if a command exits with a non-zero status.
+[ "$DEBUG" == 'true' ] && set -x
 
 function log {
     echo "🔵 $1"
@@ -193,7 +202,6 @@ install 'brew cask install' "${IMPORTANT_CASK[@]}"
 
 log "Install BREWS"
 install 'brewInstallOrUpgrade' "${BREWS[@]}"
-brew link --overwrite ruby
 
 log "Configurating GIT"
 for CONFIG in "${GIT_CONFIGS[@]}"
@@ -240,6 +248,7 @@ brew cask cleanup
 # Setup mac system
 m finder showhiddenfiles YES
 m finder showextensions YES
+m screensaver askforpassword YES
 
-echo "Run [mackup restore] after DropBox has done syncing ..."
+# echo "Run [mackup restore] after DropBox has done syncing ..."
 echo "Done!"
